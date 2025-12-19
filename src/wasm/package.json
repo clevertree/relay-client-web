@@ -1,0 +1,34 @@
+{
+  "name": "relay-hook-transpiler",
+  "type": "module",
+  "collaborators": [
+    "Ari Asulin"
+  ],
+  "description": "Minimal JSX/TSX transpiler for Relay hooks with dynamic import() rewrite to context.helpers.loadModule and friendly errors",
+  "version": "0.2.6",
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clevertree/hook-transpiler"
+  },
+  "files": [
+    "relay_hook_transpiler_bg.wasm",
+    "relay_hook_transpiler.js",
+    "relay_hook_transpiler_bg.js",
+    "relay_hook_transpiler.d.ts"
+  ],
+  "main": "relay_hook_transpiler.js",
+  "homepage": "https://relaynet.online",
+  "types": "relay_hook_transpiler.d.ts",
+  "sideEffects": [
+    "./relay_hook_transpiler.js",
+    "./snippets/*"
+  ],
+  "keywords": [
+    "jsx",
+    "tsx",
+    "transpiler",
+    "swc",
+    "wasm"
+  ]
+}

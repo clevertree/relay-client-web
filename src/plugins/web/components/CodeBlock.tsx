@@ -1,0 +1,47 @@
+import type {CodeBlockProps} from '../../types'
+
+/**
+ * Web CodeBlock Component
+ *
+ * Renders code with syntax highlighting placeholder.
+ * Can be extended with Prism.js or highlight.js.
+ */
+export function CodeBlock({
+                              language,
+                              filename,
+                              children,
+                              className = '',
+                          }: CodeBlockProps) {
+    const codeContent = typeof children === 'string' ? children : ''
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(codeContent)
+        } catch {
+            // Fallback for older browsers
+            const textarea = document.createElement('textarea')
+            textarea.value = codeContent
+            document.body.appendChild(textarea)
+            textarea.select()
+            document.execCommand('copy')
+            document.body.removeChild(textarea)
+        }
+    }
+
+    return (
+        <code className={`my-4 rounded-lg overflow-hidden ${className}`}>
+            <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-code-header)] text-sm">
+                {filename && <span className="font-mono">{filename}</span>}
+                {language && <span className="ml-auto text-xs uppercase">{language}</span>}
+                <button
+                    className="bg-none border px-2 py-1 rounded text-xs cursor-pointer transition-all hover:bg-gray-700 hover:text-white"
+                    onClick={handleCopy} aria-label="Copy code">
+                    📋 Copy
+                </button>
+            </div>
+            <pre className={`language-${language || 'text'} m-0 p-4 overflow-x-auto bg-transparent`}>
+        <code className="font-mono text-sm leading-relaxed">{children}</code>
+      </pre>
+        </code>
+    )
+}

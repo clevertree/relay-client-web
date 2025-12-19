@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Package managers
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.svelte-kit/
+.turbo/
+.vercel/
+storybook-static/
+coverage/
+.nyc_output/
+**/.cache/
+.parcel-cache/
+dist-ssr/
+
+# Test artifacts
+cypress/screenshots/
+cypress/videos/
+playwright-report/
+test-results/
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Editor/OS
+.DS_Store
+.idea/
+.vscode/
+Thumbs.db
+
+# Misc
+.eslintcache
+.prettier-cache/
+*.tsbuildinfo
+
+# WASM build artifacts (if generated locally)
+**/pkg/
+**/wasm-pack/**
+**/target/
