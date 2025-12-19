@@ -174,8 +174,8 @@ export function VideoPlayer({
     // Determine whether VideoPlayer is enabled. Priority:
     // 1. explicit `enabled` prop (boolean)
     // 2. runtime global `window.__videoEnabled` (boolean)
-    // 3. environment Vite flag VITE_DISABLE_VIDEO === 'true' (default disables)
-    const envDisable = typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_DISABLE_VIDEO === 'true'
+    // 3. environment flag RELAY_PUBLIC_DISABLE_VIDEO === 'true' (default disables)
+    const envDisable = typeof import.meta !== 'undefined' && (import.meta as any).env?.RELAY_PUBLIC_DISABLE_VIDEO === 'true'
     const globalOverride = (globalThis as any).__videoEnabled
     const isEnabled = typeof enabled === 'boolean' ? enabled : (typeof globalOverride === 'boolean' ? globalOverride : !envDisable)
 

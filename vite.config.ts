@@ -1,72 +1,60 @@
-import {defineConfig} from 'vite'
-import react from '@vitejs/plugin-react'
-import wasm from 'vite-plugin-wasm'
 import path from 'path'
-import fs from 'fs'
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import yaml from '@rollup/plugin-yaml'
+import topLevelAwait from 'vite-plugin-top-level-await'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
+import wasm from 'vite-plugin-wasm'
 
-function template404Plugin() {
-    return {
-        name: 'template-404-middleware',
-        apply: 'serve',
-        configureServer(server: any) {
-            const publicDir: string = server.config.publicDir
-            const rootPublic = path.resolve(publicDir)
-            server.middlewares.use((req: any, res: any, next: any) => {
-                try {
-                    const url = req.url as string || ''
-                    if (!url.startsWith('/template/')) return next()
-                    const u = new URL(url, 'http://dev.local')
-                    const pathname = decodeURIComponent(u.pathname)
-                    const filePath = path.resolve(path.join(publicDir, pathname))
-                    if (!filePath.startsWith(rootPublic)) {
-                        res.statusCode = 403
-                        res.setHeader('content-type', 'text/plain')
-                        return res.end('Forbidden')
-                    }
-                    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-                        return next()
-                    }
-                    res.statusCode = 404
-                    res.setHeader('content-type', 'text/plain')
-                    return res.end('Not Found')
-                } catch (_) {
-                    return next()
-                }
-            })
-        },
-    }
-}
-
-// https://vite.dev/config/
+// Vite config for relay-client-web.
+// NOTE: Production builds use esbuild (npm run build), not Vite, due to better WASM handling.
+// This config is primarily for dev mode (npm run dev:vite) and build:vite fallback.
 export default defineConfig({
-    plugins: [template404Plugin(), react(), wasm()],
-    server: {
-        // Serve /template folder as static assets
-        middlewareMode: false,
-    },
-    publicDir: 'public',
-    optimizeDeps: {
-        include: ['@swc/wasm-web', '@babel/standalone'],
-    },
-    build: {
-        minify: false, // Keep bundles readable for debugging
-        // Disable sourcemaps by default to keep Docker/CI builds memory-light.
-        // Enable by setting VITE_SOURCEMAP=true when needed locally.
-        sourcemap: process.env.VITE_SOURCEMAP === 'true',
-    },
-    // Ensure React dev build can be selected for debug dist builds
-    // Use VITE_NODE_ENV to force development mode when needed
-    define: {
-        'process.env.NODE_ENV': JSON.stringify(process.env.VITE_NODE_ENV || process.env.NODE_ENV || 'production'),
-    },
-    // Configure server to serve template folder
-    resolve: {
-        alias: {
-            '@': path.resolve(__dirname, './src'),
-            '@relay/shared': path.resolve(__dirname, './src/shared'),
-            // Provide a shim alias for Babel-standalone so shared code can import a stable name
-            '@babel-standalone-shim': '@babel/standalone',
+  plugins: [
+    wasm(),
+    topLevelAwait(),
+    react(),
+    yaml(),
+    viteStaticCopy({
+      targets: [
+        {
+          // Copy everything from public/ except the legacy esbuild index.html to avoid overriding Vite's output.
+          src: ['public/**', '!public/index.html', '!public/template', '!public/template/**'],
+          dest: '.',
+          globOptions: {
+            ignore: ['public/template', 'public/template/**'],
+          },
         },
-        dedupe: ['react', 'react-dom'],
+      ],
+    }),
+  ],
+  publicDir: 'public',
+  build: {
+    target: 'es2022',
+    outDir: 'dist',
+    sourcemap: true,
+    copyPublicDir: false,
+    rollupOptions: {
+      external: [],
+      output: {
+        manualChunks: undefined,
+      },
     },
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
+  assetsInclude: ['**/*.wasm'],
+  optimizeDeps: {
+    exclude: ['@clevertree/hook-transpiler', '@clevertree/themed-styler'],
+    esbuildOptions: {
+      target: 'es2022',
+    },
+  },
+  worker: {
+    format: 'es',
+    plugins: () => [wasm(), topLevelAwait()],
+  },
 })

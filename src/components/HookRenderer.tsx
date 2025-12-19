@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { HookLoader, WebModuleLoader, transpileCode, type HookContext, unifiedBridge, styleManager } from '@relay/shared'
+import { HookLoader, WebModuleLoader, transpileCode, type HookContext } from '@clevertree/hook-transpiler'
+import { unifiedBridge, styleManager } from '@clevertree/themed-styler'
 import ErrorBoundary from './ErrorBoundary'
 import { MarkdownRenderer } from './MarkdownRenderer'
 import { FileRenderer } from './FileRenderer'
@@ -59,13 +60,13 @@ const HookRenderer: React.FC<HookRendererProps> = ({ host, hookPath }) => {
         // No requireShim needed for web loader; WebModuleLoader executes code in a sandboxed Function
 
         const rewriteBuiltins = (code: string) => {
-            // Replace bare @relay/* imports with globals to avoid browser bare-spec failures
+            // Replace bare @clevertree/* imports with globals to avoid browser bare-spec failures
             const mkBuiltin = (spec: string, destructure: string) => `const ${destructure} = ((globalThis && globalThis.__relay_builtins && globalThis.__relay_builtins['${spec}']) || {});`
             const markdownRe = /import\s+\{\s*MarkdownRenderer\s*\}\s+from\s+['"]@relay\/markdown['"];?/g
             const themeRe = /import\s+\{\s*registerThemesFromYaml\s*\}\s+from\s+['"]@relay\/theme['"];?/g
             const jsxRuntimeRe = /import\s+\{\s*jsx\s+as\s+(_jsx)\s*,\s*jsxs\s+as\s+(_jsxs)\s*,\s*Fragment\s+as\s+(_Fragment)\s*\}\s+from\s+['"]react\/jsx-runtime['"];?/g
-            let rewritten = code.replace(markdownRe, mkBuiltin('@relay/markdown', '{ MarkdownRenderer }'))
-            rewritten = rewritten.replace(themeRe, mkBuiltin('@relay/theme', '{ registerThemesFromYaml }'))
+            let rewritten = code.replace(markdownRe, mkBuiltin('@clevertree/markdown', '{ MarkdownRenderer }'))
+            rewritten = rewritten.replace(themeRe, mkBuiltin('@clevertree/theme', '{ registerThemesFromYaml }'))
             rewritten = rewritten.replace(jsxRuntimeRe, (_m, a, b, c) => `const ${a} = (globalThis.__hook_jsx_runtime?.jsx || globalThis.__jsx || (globalThis.__hook_react && globalThis.__hook_react.createElement) || (() => null)); const ${b} = (globalThis.__hook_jsx_runtime?.jsxs || globalThis.__jsxs || (globalThis.__hook_react && globalThis.__hook_react.createElement) || (() => null)); const ${c} = (globalThis.__hook_jsx_runtime?.Fragment || globalThis.__Fragment || (globalThis.__hook_react && globalThis.__hook_react.Fragment));`)
             return rewritten
         }
@@ -143,8 +144,8 @@ const HookRenderer: React.FC<HookRendererProps> = ({ host, hookPath }) => {
         }
 
         const builtinModules: Record<string, any> = {
-            '@relay/markdown': { MarkdownRenderer },
-            '@relay/theme': {
+            '@clevertree/markdown': { MarkdownRenderer },
+            '@clevertree/theme': {
                 registerThemeStyles: (name: string, defs?: Record<string, any>) => {
                     unifiedBridge.registerTheme(name, defs)
                     try { styleManager.renderCssIntoDom() } catch (e) { }

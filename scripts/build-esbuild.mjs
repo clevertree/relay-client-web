@@ -8,17 +8,30 @@ const srcDir = path.join(root, 'src')
 const outDir = path.join(root, 'dist')
 const assetsDir = path.join(outDir, 'assets')
 
-function ensureIndexHtml(jsFile, cssFile) {
-  const htmlPath = path.join(outDir, 'index.html')
-  const cssTag = cssFile && fs.existsSync(path.join(assetsDir, cssFile))
-    ? `    <link rel="stylesheet" href="/assets/${cssFile}" />\n`
-    : ''
-  const html = `<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="UTF-8" />\n    <link rel="icon" type="image/png" href="/icon.png" />\n    <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n    <title>client-web (esbuild)</title>\n${cssTag}    <script type="module" crossorigin src="/assets/${jsFile}"></script>\n  </head>\n  <body>\n    <div id="root"></div>\n  </body>\n</html>`
-  fs.mkdirSync(outDir, { recursive: true })
-  fs.writeFileSync(htmlPath, html)
+function copyPublic() {
+  const publicDir = path.join(root, 'public')
+  if (fs.existsSync(publicDir)) {
+    if (!fs.existsSync(outDir)) {
+      fs.mkdirSync(outDir, { recursive: true })
+    }
+    const files = fs.readdirSync(publicDir)
+    for (const file of files) {
+      const src = path.join(publicDir, file)
+      const dest = path.join(outDir, file)
+      try {
+        if (fs.lstatSync(src).isSymbolicLink()) {
+          // Skip symbolic links that might point to missing targets
+          continue
+        }
+        fs.cpSync(src, dest, { recursive: true, force: true, dereference: true })
+      } catch (e) {
+        console.warn(`[esbuild] Failed to copy ${src} to ${dest}: ${e.message}`)
+      }
+    }
+  }
 }
 
-// Read .env file and extract RELAY_PUBLIC_* and VITE_* variables
+// Read .env file and extract RELAY_PUBLIC_* variables
 function readEnvFile(envPath) {
   const env = {}
   if (fs.existsSync(envPath)) {
@@ -30,8 +43,8 @@ function readEnvFile(envPath) {
       if (eqIdx === -1) continue
       const key = trimmed.slice(0, eqIdx).trim()
       const val = trimmed.slice(eqIdx + 1).trim()
-      // Expose RELAY_PUBLIC_* and VITE_* variables
-      if (key.startsWith('RELAY_PUBLIC_') || key.startsWith('VITE_')) {
+      // Expose RELAY_PUBLIC_* variables
+      if (key.startsWith('RELAY_PUBLIC_')) {
         env[key] = val.replace(/^["|']|["|']$/g, '')
       }
     }
@@ -39,7 +52,7 @@ function readEnvFile(envPath) {
   return env
 }
 
-export async function bundle({ watch = false } = {}) {
+export async function bundle({ serve = false } = {}) {
   const envVars = readEnvFile(path.join(root, '.env'))
 
   // Build define object for import.meta.env access
@@ -49,8 +62,12 @@ export async function bundle({ watch = false } = {}) {
   }
 
   const opts = {
-    entryPoints: [path.join(srcDir, 'main.tsx')],
+    entryPoints: {
+      'main': path.join(srcDir, 'main.tsx'),
+      'index': path.join(srcDir, 'assets', 'index.css'),
+    },
     outdir: assetsDir,
+    publicPath: '/assets/',
     bundle: true,
     format: 'esm',
     sourcemap: true,
@@ -68,6 +85,7 @@ export async function bundle({ watch = false } = {}) {
     metafile: true,
     splitting: true,
     logLevel: 'info',
+    external: ['react-native'],
     define: {
       'process.env.NODE_ENV': '\"development\"',
       '__DEV__': 'true',
@@ -103,21 +121,33 @@ export async function bundle({ watch = false } = {}) {
       }
     ],
     // Use a stable entry name for predictable index.html
-    entryNames: 'main',
+    entryNames: '[name]',
   }
-  const result = await build(opts)
-  if (watch) {
+  if (serve) {
     const ctx = await context(opts)
-    await ctx.watch()
+    const { host, port } = await ctx.serve({
+      host: '0.0.0.0',
+      port: 8001,
+      servedir: outDir,
+      fallback: path.join(outDir, 'index.html')
+    })
+
+    // We still need to generate the assets once
+    await ctx.rebuild()
+    copyPublic()
+
+    console.log(`[esbuild] serving at http://${host || 'localhost'}:${port}`)
+    return { host, port }
+  } else {
+    const result = await build(opts)
+    copyPublic()
+    return { jsFile: 'main.js' }
   }
-  // Always reference the stable entry name (and the generated CSS bundle if present)
-  ensureIndexHtml('main.js', 'main.css')
-  return { jsFile: 'main.js' }
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const watch = process.argv.includes('--watch')
-  bundle({ watch }).catch(err => {
+  const serve = process.argv.includes('--serve')
+  bundle({ serve }).catch(err => {
     console.error('[esbuild] build failed', err)
     process.exit(1)
   })

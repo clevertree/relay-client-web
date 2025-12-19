@@ -604,5 +604,5 @@ export function RepoBrowser({ tabId }: RepoBrowserProps) {
 
 /**
  * Build a URL to fetch content from a peer
- * (imported from @relay/shared for consistency with React Native client)
+ * (imported from @clevertree/client-shared for consistency with React Native client)
  */

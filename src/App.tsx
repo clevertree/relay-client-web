@@ -8,7 +8,7 @@ import { TestTab } from './components/TestTab'
 import { PluginProvider } from './plugins/PluginContext'
 import { webPlugin } from './plugins/web'
 import { TSDiv } from './components/TSDiv.tsx'
-import { unifiedBridge } from '@relay/shared'
+import { unifiedBridge } from '@clevertree/themed-styler'
 
 function App() {
   const activeTabId = useAppState((s) => s.activeTabId)

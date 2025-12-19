@@ -1,28 +1,29 @@
 import {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
 import App from './App.tsx'
-// wasm loader consolidated in @relay/shared
+// wasm loader consolidated in @clevertree/client-shared
 import ErrorBoundary from './components/ErrorBoundary'
-import './index.css'
 
 async function bootstrap() {
     let initError: Error | undefined
     try {
-        // Initialize both WASM modules (hook-transpiler + themed-styler) via consolidated loader
+        // Initialize both WASM modules (hook-transpiler + themed-styler)
         try {
-            const {wasmLoader} = await import('@relay/shared')
-            await wasmLoader.initAllWasms()
-            // After wasm runtime initialized, attempt to populate default themes from the wasm bundle
-            try {
-                const shared = await import('@relay/shared')
-                if (shared && typeof shared.ensureDefaultsLoaded === 'function') {
-                    await shared.ensureDefaultsLoaded()
-                }
-            } catch (e) {
-                /* ignore */
+            const { initTranspiler } = await import('@clevertree/hook-transpiler')
+            const { initThemedStyler } = await import('@clevertree/themed-styler')
+            await initTranspiler()
+            await initThemedStyler()
+            
+            // After wasm runtime initialized, attempt to populate default themes
+            const { ensureDefaultsLoaded, styleManager } = await import('@clevertree/themed-styler')
+            if (typeof ensureDefaultsLoaded === 'function') {
+                await ensureDefaultsLoaded()
+            }
+            if (styleManager && typeof styleManager.startAutoSync === 'function') {
+                styleManager.startAutoSync()
             }
         } catch (e) {
-            console.warn('[main] wasm loader init failed', e)
+            console.warn('[main] wasm init failed', e)
         }
     } catch (error) {
         initError = error instanceof Error ? error : new Error(String(error))

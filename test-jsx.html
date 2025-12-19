@@ -27,7 +27,7 @@
     <script type="module">
         async function runTests() {
             try {
-                // Import the WASM module (served by Vite)
+                // Import the WASM module (served by dev server)
                 const wasmModule = await import('/src/wasm/hook_transpiler.js');
                 await wasmModule.default();
                 const { transpile_jsx } = wasmModule;

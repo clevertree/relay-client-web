@@ -130,7 +130,7 @@ When hook-transpiler changes:
 ### Hook not rendering
 1. Check transpiler output in DevTools Network/Console
 2. Verify special imports rewritten to globals (grep for `globalThis.__`)
-3. Ensure `@relay/meta` exports available in runtimeLoader
+3. Ensure `@clevertree/meta` exports available in runtimeLoader
 4. Check plugin functions export correctly
 
 ### React import errors
@@ -142,7 +142,7 @@ When hook-transpiler changes:
 
 Hooks can load adjacent env.json:
 ```javascript
-import { dirname, url } from '@relay/meta'
+import { dirname, url } from '@clevertree/meta'
 const envUrl = new URL('./env.json', dirname)
 const resp = await fetch(envUrl)
 const env = await resp.json()

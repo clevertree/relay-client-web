@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { unifiedBridge } from '@relay/shared'
+import { unifiedBridge } from '@clevertree/themed-styler'
 
 // A lightweight DOM observer that registers class usage for elements that
 // may not be wrapped by our TSDiv (e.g. third-party libs or raw markup).

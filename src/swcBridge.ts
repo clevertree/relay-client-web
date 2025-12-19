@@ -16,7 +16,7 @@ export async function preloadSwc() {
       console.log('[swcBridge] Module keys:', Object.keys(ns))
       console.log('[swcBridge] ns.default:', typeof ns?.default)
       
-      // Robust init without explicit wasm asset import to avoid Vite import-analysis issues
+      // Robust init without explicit wasm asset import to avoid bundler import-analysis issues
       if (!initialized) {
         try {
           if (typeof ns?.default === 'function') {

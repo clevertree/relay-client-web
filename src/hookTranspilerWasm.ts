@@ -8,7 +8,7 @@
 export async function initHookTranspilerWasm(): Promise<void> {
   // Delegate to consolidated wasm loader
   try {
-    const loader = await import('@relay/shared')
+    const loader = await import('@clevertree/client-shared')
     if (loader && loader.wasmLoader && typeof loader.wasmLoader.initAllWasms === 'function') {
       await loader.wasmLoader.initAllWasms()
     }

@@ -2,7 +2,7 @@
 
 ## Web Client Environment Variables
 
-The web client automatically exposes public environment variables prefixed with `RELAY_PUBLIC_` and `VITE_` via `import.meta.env`.
+The web client automatically exposes public environment variables prefixed with `RELAY_PUBLIC_` via `import.meta.env`.
 
 ### Configuration
 
@@ -17,7 +17,7 @@ RELAY_PUBLIC_MASTER_PEER_LIST="https://node-dfw1.relaynet.online;https://node-df
 
 When you build the project (`npm run build`), the esbuild configuration:
 1. Reads the `.env` file
-2. Extracts all `RELAY_PUBLIC_*` and `VITE_*` variables
+2. Extracts all `RELAY_PUBLIC_*` variables
 3. Injects them into `import.meta.env` definitions in the bundle
 
 This makes them accessible in code:
@@ -29,8 +29,8 @@ const peerList = import.meta.env.RELAY_PUBLIC_MASTER_PEER_LIST
 
 ### Build Process
 
-- **Development watch server** (`npm run dev`): Uses watch-dev.sh with production builds; rebuilds on src/ changes
-- **Production build** (`npm run build`): Uses Vite to bundle; reads .env and injects public vars
+- **Development server** (`npm run dev`): Runs esbuild with a local server
+- **Production build** (`npm run build`): Uses esbuild to bundle; reads .env and injects public vars
 
 ### Usage in PeersView Component
 

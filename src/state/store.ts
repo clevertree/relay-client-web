@@ -276,7 +276,7 @@ export const useAppState = create<AppState>((set, get) => ({
         persistTheme(theme)
         set({theme})
         // Apply theme via unifiedBridge
-        import('@relay/shared').then(({unifiedBridge}) => {
+        import('@clevertree/themed-styler').then(({unifiedBridge}) => {
             if (unifiedBridge.setCurrentTheme) {
                 unifiedBridge.setCurrentTheme(theme)
             }

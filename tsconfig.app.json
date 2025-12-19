@@ -28,10 +28,10 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "@relay/shared": [
+      "@clevertree/shared": [
         "./src/shared"
       ],
-      "@relay/shared/*": [
+      "@clevertree/shared/*": [
         "./src/shared/*"
       ]
     }

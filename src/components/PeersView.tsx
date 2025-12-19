@@ -268,22 +268,13 @@ async function getPeersFromEnvironment(): Promise<string[]> {
         console.log('[getPeersFromEnvironment] Failed to load from localStorage:', e)
     }
 
-    // Check Vite environment variables (only available after full rebuild with .env)
-    const envPeers = import.meta.env.RELAY_PUBLIC_MASTER_PEER_LIST || "https://node-dfw1.relaynet.online;https://node-dfw2.relaynet.online"
+    // Check environment variables (only available after full rebuild with .env)
+    const envPeers = import.meta?.env?.RELAY_PUBLIC_MASTER_PEER_LIST || "https://node-dfw1.relaynet.online;https://node-dfw2.relaynet.online"
     console.log('[getPeersFromEnvironment] RELAY_PUBLIC_MASTER_PEER_LIST:', envPeers)
     if (envPeers) {
         const peers = envPeers.split(';').map((p: string) => p.trim()).filter((p: string) => p.length > 0)
         console.log('[getPeersFromEnvironment] Loaded from build-time env:', peers)
         return peers
-    }
-
-    // Check for default local server
-    const hostname = window.location.hostname
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        // Running locally, assume server on same host
-        const port = window.location.port || '8088'
-        console.log('[getPeersFromEnvironment] Using local server:', `${hostname}:${port}`)
-        return [`${hostname}:${port}`]
     }
 
     // Try to get from global config (would be set by server)

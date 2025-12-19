@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { unifiedBridge, styleManager } from '@relay/shared'
+import { unifiedBridge, styleManager } from '@clevertree/themed-styler'
 
 type DivProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   tag?: string

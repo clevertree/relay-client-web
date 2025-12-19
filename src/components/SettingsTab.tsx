@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { styleManager, unifiedBridge } from '@relay/shared'
+import { styleManager, unifiedBridge } from '@clevertree/themed-styler'
 import { useTranspilerSetting } from '../state/transpilerSettings'
 import type { ThemeName } from '../state/store'
 import { useAppState } from '../state/store'
@@ -193,29 +193,14 @@ export function SettingsTab() {
     }, [debugPanel.css])
 
     const forceLoadFromManifest = useCallback(async () => {
-        try {
-            const wasmEntry = await import('../wasmEntry')
-            const forceInit = (wasmEntry as Record<string, unknown>).forceInitThemedStylerFromManifest
-            if (typeof forceInit === 'function') {
-                const v = await forceInit()
-                // re-run refresh to update UI state
-                refreshDebugPanel()
-                return v
-            }
-        } catch (e) {
-            console.warn('[SettingsTab] forceInit failed', e)
-        }
         return null
-    }, [refreshDebugPanel])
+    }, [])
 
     useEffect(() => {
         ; (async () => {
             try {
-                const shim = await import('/src/wasm/themed_styler.js')
-                const defaultInit = (shim as Record<string, unknown>).default
-                if (typeof defaultInit === 'function') {
-                    await defaultInit()
-                }
+                const { initThemedStyler } = await import('@clevertree/themed-styler')
+                await initThemedStyler()
                 refreshDebugPanel()
             } catch (e) {
                 const errorMessage = e instanceof Error ? e.message : String(e)
