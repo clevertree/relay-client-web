@@ -25,7 +25,6 @@
     "noUncheckedSideEffectImports": true
   },
   "include": [
-    "scripts/build-esbuild.mjs",
-    "vite.config.ts"
+    "scripts/build-esbuild.mjs"
   ]
 }
