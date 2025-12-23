@@ -1,10 +1,49 @@
-# React + TypeScript + esbuild
+# <img src="public/icon.png" width="32" height="32" align="center" /> Relay Client Web (React + TypeScript)
 
 This template provides a minimal setup to get React working in esbuild with some ESLint rules.
 
 Currently, two official plugins are available:
 
 - [esbuild](https://esbuild.github.io/) for fast builds and bundling
+
+## Hook Component Naming Convention
+
+To distinguish between precompiled JSX components and runtime-transpiled hook components:
+
+- **Lowercase filenames** (`app.jsx`, `home.jsx`, `errorBoundary.jsx`): Runtime-transpiled hook components that are loaded dynamically
+- **PascalCase filenames** (`App.jsx`, `Home.jsx`): Precompiled JSX components (not used in this project, but useful when integrating with other frameworks)
+
+All client hook components in `public/hooks/` should use **lowercase** filenames to maintain consistency with dynamic loading patterns.
+
+## Lazy Loading Hook Components
+
+Hook components support React's lazy loading and error boundaries for code splitting:
+
+```jsx
+import React, { useState, useEffect, lazy, Suspense } from 'react'
+import errorBoundary from './errorBoundary.jsx'
+
+// Lazy load page components using dynamic import()
+const Home = lazy(() => import('./home.jsx'))
+const Settings = lazy(() => import('./settings.jsx'))
+const Test = lazy(() => import('./test.jsx'))
+
+export default function App() {
+  return (
+    <errorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Home />
+      </Suspense>
+    </errorBoundary>
+  )
+}
+```
+
+**How it works:**
+- Dynamic `import('./module.jsx')` calls are automatically rewritten by hook-transpiler to `__hook_import('./module.jsx')`
+- `__hook_import` is a runtime function that loads modules relative to the current hook's path
+- `Suspense` wraps lazy components to display a loading fallback while the module loads
+- `ErrorBoundary` catches any errors during component rendering or loading
 
 ## React Compiler
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useFetchContent } from '../plugins'
-import { MarkdownRenderer } from '../components/MarkdownRenderer'
+import { MarkdownRenderer } from '@clevertree/hook-transpiler'
+import { unifiedBridge } from '@clevertree/themed-styler'
 
 interface RouterProps {
   path: string
@@ -89,6 +90,7 @@ export function Router({ path, navigate }: RouterProps) {
     <MarkdownRenderer 
       content={content} 
       navigate={navigate}
+      onElement={(tag, props) => unifiedBridge.registerUsage(tag, props)}
     />
   )
 }

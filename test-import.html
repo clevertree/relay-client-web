@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Import Test</title>
+</head>
+
+<body>
+    <h1>Testing Package Imports</h1>
+    <div id="output"></div>
+    <script type="module">
+        const output = document.getElementById('output');
+        const log = (msg, isError = false) => {
+            const div = document.createElement('div');
+            div.textContent = msg;
+            div.style.color = isError ? 'red' : 'green';
+            div.style.fontFamily = 'monospace';
+            div.style.margin = '5px 0';
+            output.appendChild(div);
+            console.log(msg);
+        };
+
+        window.onerror = (msg, source, line, col, error) => {
+            log(`ERROR: ${msg} at ${source}:${line}:${col}`, true);
+            log(`Stack: ${error?.stack}`, true);
+        };
+
+        (async () => {
+            try {
+                log('Testing hook-transpiler import...');
+                const transpiler = await import('@clevertree/hook-transpiler');
+                log('✓ hook-transpiler loaded');
+                log('  Exports: ' + Object.keys(transpiler).slice(0, 5).join(', '));
+
+                log('\nTesting themed-styler import...');
+                const styler = await import('@clevertree/themed-styler');
+                log('✓ themed-styler loaded');
+                log('  Exports: ' + Object.keys(styler).slice(0, 5).join(', '));
+
+                log('\nTesting initTranspiler...');
+                if (typeof transpiler.initTranspiler === 'function') {
+                    await transpiler.initTranspiler();
+                    log('✓ initTranspiler completed');
+                } else {
+                    log('✗ initTranspiler not a function', true);
+                }
+
+                log('\nTesting initThemedStyler...');
+                if (typeof styler.initThemedStyler === 'function') {
+                    await styler.initThemedStyler();
+                    log('✓ initThemedStyler completed');
+                } else {
+                    log('✗ initThemedStyler not a function', true);
+                }
+
+                log('\n✓ ALL TESTS PASSED');
+            } catch (e) {
+                log('✗ ERROR: ' + e.message, true);
+                log('Stack: ' + e.stack, true);
+            }
+        })();
+    </script>
+</body>
+
+</html>

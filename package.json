@@ -11,8 +11,9 @@
   },
   "dependencies": {
     "@babel/standalone": "^7.26.2",
-    "@clevertree/hook-transpiler": "^1.0.5",
-    "@clevertree/themed-styler": "^1.0.5",
+    "@clevertree/act": "../act",
+    "@clevertree/hook-transpiler": "../hook-transpiler",
+    "@clevertree/themed-styler": "../themed-styler",
     "markdown-to-jsx": "^9.3.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -23,8 +24,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@swc/cli": "^0.7.9",
-    "@swc/core": "^1.15.3",
     "@types/express": "^4.17.21",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",

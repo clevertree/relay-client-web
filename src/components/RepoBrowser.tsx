@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useAppState } from '../state/store'
 import { RepoFetchProvider } from '../context/RepoFetchContext'
-import HookRenderer from './HookRenderer'
-import ErrorBoundary from './ErrorBoundary'
-import { TSDiv } from './TSDiv'
+import HookRenderer from './ThemedHookRenderer'
+import { ErrorBoundary } from '@clevertree/hook-transpiler'
+import { TSDiv, unifiedBridge } from '@clevertree/themed-styler'
 
 interface RepoBrowserProps {
     tabId: string
@@ -273,7 +273,7 @@ export function RepoBrowser({ tabId }: RepoBrowserProps) {
             fetchJson: providerFetchJson
         }}>
             <TSDiv className="flex flex-col h-full">
-                <ErrorBoundary>
+                <ErrorBoundary onElement={(tag, props) => unifiedBridge.registerUsage(tag, props)}>
                     <TSDiv className="flex-1 overflow-y-auto">
 
                         {loading &&

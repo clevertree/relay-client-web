@@ -7,7 +7,7 @@ import { SettingsTab } from './components/SettingsTab'
 import { TestTab } from './components/TestTab'
 import { PluginProvider } from './plugins/PluginContext'
 import { webPlugin } from './plugins/web'
-import { TSDiv } from './components/TSDiv.tsx'
+import { TSDiv } from './components/TSDiv'
 import { unifiedBridge } from '@clevertree/themed-styler'
 
 function App() {

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal React Test</title>
+    <link rel="stylesheet" href="/assets/index.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: system-ui;
+        }
+
+        #root {
+            border: 2px solid blue;
+            min-height: 100px;
+        }
+
+        .test {
+            background: lightgreen;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>React Mount Test</h1>
+    <div id="root"></div>
+    <div id="status">Loading...</div>
+    <script type="module">
+        import { StrictMode, createElement } from 'react';
+        import { createRoot } from 'react-dom/client';
+
+        const status = document.getElementById('status');
+        const log = (msg) => {
+            status.innerHTML += '<br>' + msg;
+            console.log(msg);
+        };
+
+        log('Starting...');
+
+        try {
+            const root = createRoot(document.getElementById('root'));
+            log('✓ Root created');
+
+            const TestApp = () => {
+                return createElement('div', {
+                    className: 'test',
+                    style: { border: '2px solid green' }
+                }, 'Hello from React!');
+            };
+
+            root.render(createElement(StrictMode, null, createElement(TestApp)));
+            log('✓ Render called');
+
+            setTimeout(() => {
+                const rendered = document.querySelector('.test');
+                if (rendered) {
+                    log('✓ Component rendered successfully!');
+                } else {
+                    log('✗ Component not found in DOM');
+                }
+            }, 500);
+
+        } catch (e) {
+            log('✗ Error: ' + e.message);
+            console.error(e);
+        }
+    </script>
+</body>
+
+</html>
