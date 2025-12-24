@@ -11,9 +11,9 @@ if (globalThis.__hook_transpile_jsx) {
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { IsolatedHookRenderer } from './components/IsolatedHookRenderer'
-import { ErrorBoundary } from '@clevertree/hook-transpiler'
+import { ErrorBoundary } from '@clevertree/hook-transpiler/web'
 import { unifiedBridge } from '@clevertree/themed-styler'
-import { initHookTranspiler, initThemedStylerWasm } from './utils/wasmInit'
+import { initHookTranspiler, initThemedStylerWasm, preloadHookPackages } from './utils/wasmInit'
 
 async function bootstrap() {
     console.log('[main] Starting bootstrap...')
@@ -24,6 +24,10 @@ async function bootstrap() {
             console.log('[main] Initializing transpiler...')
             await initHookTranspiler()
             console.log('[main] ✓ Transpiler initialized')
+
+            console.log('[main] Preloading hook packages...')
+            await preloadHookPackages()
+            console.log('[main] ✓ Hook packages preloaded')
 
             console.log('[main] Initializing themed-styler...')
             await initThemedStylerWasm()
@@ -64,7 +68,7 @@ async function bootstrap() {
                 onElement={(tag, props) => unifiedBridge.registerUsage(tag, props)}
             >
                 <IsolatedHookRenderer
-                    host=""
+                    host={window.location.origin}
                     hookPath="/hooks/app.jsx"
                     onElement={(tag, props) => unifiedBridge.registerUsage(tag, props)}
                     requestRender={() => unifiedBridge.requestRender?.()}

@@ -172,7 +172,7 @@ export async function bundle({ serve = false } = {}) {
     metafile: true,
     splitting: true,
     logLevel: 'info',
-    external: ['react-native'],
+    external: ['android-ios-native'],
     define: {
       'process.env.NODE_ENV': '\"development\"',
       '__DEV__': 'true',

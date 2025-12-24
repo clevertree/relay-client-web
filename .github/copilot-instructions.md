@@ -1,14 +1,14 @@
 # relay-clients Copilot Instructions
 
 ## Project Overview
-Monorepo containing web (Next.js) and mobile (React Native) clients for Relay hook execution system.
+Monorepo containing web (Next.js) and mobile (Android/iOS Native) clients for Relay hook execution system.
 
 ### Structure
 ```
 relay-clients/
 ├── packages/
 │   ├── web/           - Next.js web client
-│   ├── mobile/        - React Native mobile client
+│   ├── mobile/        - Android/iOS Native mobile client
 │   ├── shared/        - Shared runtime/utils
 │   └── [other packages]
 ```
@@ -75,12 +75,12 @@ globalThis.__relay_meta = { filename, dirname, url }
 ## Mobile Client (packages/mobile/)
 
 ### Tech Stack
-- React Native
+- Android/iOS Native
 - TypeScript
 - Expo (if applicable)
 
 ### WASM Support
-React Native has **no WASM support** - use CommonJS transpilation target.
+Android/iOS Native has **no WASM support** - use CommonJS transpilation target.
 
 Transpiler CommonJS output (`to_commonjs: true`):
 - Converts `export` → `Object.defineProperty(exports, ...)`

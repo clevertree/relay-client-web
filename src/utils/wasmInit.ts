@@ -1,6 +1,22 @@
 // Custom WASM initialization that bypasses hardcoded /wasm/ paths in npm packages
 // and uses import.meta.url resolution instead
 
+export async function preloadHookPackages() {
+    if (globalThis.__relay_packages) {
+        return; // Already initialized
+    }
+
+    try {
+        // Import the preloadPackages function from hook-transpiler
+        const { preloadPackages } = await import('@clevertree/hook-transpiler');
+        await preloadPackages();
+        console.log('[hook-transpiler] Packages preloaded');
+    } catch (e) {
+        console.warn('[hook-transpiler] Failed to preload packages:', e);
+        // Don't throw - hooks might not need these packages
+    }
+}
+
 export async function initHookTranspiler() {
     if (globalThis.__hook_transpile_jsx) {
         return; // Already initialized

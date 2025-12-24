@@ -6,7 +6,6 @@ import ErrorBoundary from './errorBoundary.jsx'
 // Lazy load page components
 const Home = lazy(() => import('./home.jsx'))
 const Settings = lazy(() => import('./settings.jsx'))
-const Test = lazy(() => import('./test.jsx'))
 
 // Loading fallback component
 function LoadingFallback() {
@@ -23,11 +22,10 @@ export default function App() {
     if (!React || !useState || !useEffect) {
         throw new Error('React runtime not provided to hook')
     }
-    const [activeTab, setActiveTab] = useState('home')
+    const [activeTab, setActiveTab] = useState('settings')
     const [tabs] = useState([
         { id: 'home', title: 'Home', isHome: true },
-        { id: 'settings', title: 'Settings' },
-        { id: 'test', title: 'Test' }
+        { id: 'settings', title: 'Settings' }
     ])
 
     // Apply theme on mount
@@ -46,8 +44,6 @@ export default function App() {
                 return <Home />
             case 'settings':
                 return <Settings />
-            case 'test':
-                return <Test />
             default:
                 return (
                     <div className="flex items-center justify-center h-full w-full">

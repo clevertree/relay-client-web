@@ -7,7 +7,7 @@
  */
 
 import React, { useEffect, useState } from 'react'
-import { HookRenderer } from '@clevertree/hook-transpiler'
+import { HookRenderer } from '@clevertree/hook-transpiler/web'
 
 interface IsolatedHookRendererProps {
     host: string

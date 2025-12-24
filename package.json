@@ -7,6 +7,7 @@
     "dev": "node scripts/build-esbuild.mjs --serve",
     "build": "node scripts/build-esbuild.mjs",
     "lint": "eslint .",
+    "test": "node --test src/tests/**/*.test.ts",
     "serve:relay": "npm run build && /home/ari/dev/relay-server/target/release/relay-server --repo-root /home/ari/dev/relay-server --static-paths $PWD/dist --port 8080"
   },
   "dependencies": {
@@ -35,6 +36,7 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "express": "^4.18.2",
     "globals": "^16.5.0",
+    "jsdom": "^25.0.0",
     "postcss": "^8.5.6",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4"

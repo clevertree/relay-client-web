@@ -20,6 +20,14 @@ const markdownOverrides = {
 }
 
 const ThemedHookRenderer: React.FC<HookRendererProps> = (props) => {
+    // Expose themed-styler to hook builtins
+    React.useEffect(() => {
+        (globalThis as any).__themed_styler_exports = { unifiedBridge, styleManager }
+        return () => {
+            delete (globalThis as any).__themed_styler_exports
+        }
+    }, [])
+
     return (
         <BaseHookRenderer
             {...props}
